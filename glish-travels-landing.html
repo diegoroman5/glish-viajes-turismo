@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seminario de Viajes y Turismo | Glish</title>
+    <meta name="description" content="Aprende inglés para viajes: aeropuertos, migración, emergencias y más. Seminario exclusivo para alumnos Glish nivel avanzado.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .animate-float { animation: float 6s ease-in-out infinite; }
+        @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-20px); } }
+        .gradient-text { background: linear-gradient(135deg, #10b981 0%, #14b8a6 50%, #06b6d4 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .glass { background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); }
+        html { scroll-behavior: smooth; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    
+    <script type="text/babel">
+        const { useState, useEffect, Fragment } = React;
+        
+        // Icon components using Lucide
+        const Icon = ({ name, size = 24, className = "" }) => {
+            useEffect(() => {
+                lucide.createIcons();
+            }, []);
+            return <i data-lucide={name} className={className} style={{ width: size, height: size }}></i>;
+        };
+
+        const LandingPage = () => {
+            const [isMenuOpen, setIsMenuOpen] = useState(false);
+            const [scrolled, setScrolled] = useState(false);
+            const [activeModule, setActiveModule] = useState(0);
+            const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+
+            useEffect(() => {
+                const handleScroll = () => setScrolled(window.scrollY > 20);
+                window.addEventListener('scroll', handleScroll);
+                return () => window.removeEventListener('scroll', handleScroll);
+            }, []);
+
+            useEffect(() => {
+                const currentYear = new Date().getFullYear();
+                let targetDate = new Date(`Jan 30, ${currentYear} 23:59:59`).getTime();
+                if (new Date().getTime() > targetDate) {
+                    targetDate = new Date(`Jan 30, ${currentYear + 1} 23:59:59`).getTime();
+                }
+
+                const interval = setInterval(() => {
+                    const now = new Date().getTime();
+                    const distance = targetDate - now;
+                    if (distance < 0) { clearInterval(interval); return; }
+                    setTimeLeft({
+                        days: Math.floor(distance / (1000 * 60 * 60 * 24)),
+                        hours: Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+                        minutes: Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)),
+                        seconds: Math.floor((distance % (1000 * 60)) / 1000)
+                    });
+                }, 1000);
+                return () => clearInterval(interval);
+            }, []);
+
+            const scrollToSection = (id) => {
+                document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+                setIsMenuOpen(false);
+            };
+
+            const whatsappLink = "https://wa.me/523314360000?text=¡Hola! 👋 Quiero información del seminario de Viajes y Turismo 🌎✈️";
+
+            const modules = [
+                {
+                    icon: "plane",
+                    title: "Aeropuertos y Vuelos",
+                    classes: ["Dream Destination", "Are you here to check-in?", "What did they say?", "Seatbelt sign is off"],
+                    topics: ["Vocabulario de aeropuerto y señalizaciones", "Proceso de migración y aduanas", "Anuncios de vuelo y zonas horarias", "Qué hacer si pierdes tu vuelo"]
+                },
+                {
+                    icon: "map-pin",
+                    title: "Transporte y Ciudad",
+                    classes: ["Is the bus still running?", "Crossing by bus and car"],
+                    topics: ["Direcciones y preposiciones de movimiento", "Transporte público y señalización", "Vocabulario para taxis y Uber", "Cómo cruzar fronteras terrestres"]
+                },
+                {
+                    icon: "coffee",
+                    title: "Cultura y Convivencia",
+                    classes: ["20% tip!?", "I'll have what she's having", "Window shopping"],
+                    topics: ["Etiqueta de propinas por país", "Cómo ordenar en restaurantes", "Regatear precios educadamente", "Small talk con locales"]
+                },
+                {
+                    icon: "shield",
+                    title: "Emergencias y Problemas",
+                    classes: ["I need a manager", "Tourist traps", "What would you do?"],
+                    topics: ["Quejas formales y solicitar gerente", "Identificar trampas para turistas", "Robos y cómo reportarlos", "Emergencias médicas en el extranjero"]
+                }
+            ];
+
+            return (
+                <div className="text-slate-800 bg-white antialiased">
+                    
+                    {/* Urgency Banner */}
+                    <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 text-white text-xs sm:text-sm py-3 text-center font-medium tracking-wide sticky top-0 z-[60] border-b border-white/10">
+                        <div className="flex justify-center items-center flex-wrap gap-2 sm:gap-6 px-4">
+                            <span className="inline-flex items-center text-emerald-400 font-bold uppercase tracking-wider">
+                                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                                Inscripciones cierran:
+                            </span>
+                            <div className="flex items-center space-x-2 sm:space-x-3 font-mono text-white">
+                                {[
+                                    { value: timeLeft.days, label: 'Días' },
+                                    { value: timeLeft.hours, label: 'Hrs' },
+                                    { value: timeLeft.minutes, label: 'Min' },
+                                    { value: timeLeft.seconds, label: 'Seg', pulse: true }
+                                ].map((item, i) => (
+                                    <Fragment key={item.label}>
+                                        {i > 0 && <span className="text-slate-500 font-bold">:</span>}
+                                        <div className="flex flex-col items-center leading-none">
+                                            <span className={`text-base sm:text-lg font-bold ${item.pulse ? 'text-emerald-400' : ''}`}>
+                                                {String(item.value).padStart(2, '0')}
+                                            </span>
+                                            <span className="text-[9px] uppercase text-slate-400">{item.label}</span>
+                                        </div>
+                                    </Fragment>
+                                ))}
+                            </div>
+                            <span className="hidden sm:inline text-slate-400 text-xs">(30 de Enero)</span>
+                        </div>
+                    </div>
+
+                    {/* Navigation */}
+                    <nav className={`sticky top-[44px] sm:top-[48px] w-full z-50 transition-all duration-300 ${scrolled ? 'bg-white/95 backdrop-blur-md shadow-sm py-2' : 'bg-slate-900 py-4'}`}>
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                            <div className="flex justify-between items-center">
+                                <div className="flex items-center cursor-pointer" onClick={() => window.scrollTo(0,0)}>
+                                    <img 
+                                        src={scrolled ? "glish-logo.webp" : "glish-logo-white.png"}
+                                        alt="Glish" 
+                                        className="h-10 w-auto transition-all"
+                                    />
+                                </div>
+                                
+                                <div className="hidden md:flex items-center space-x-1">
+                                    {['Temario', 'Horarios', 'Inversión'].map((item) => (
+                                        <button 
+                                            key={item}
+                                            onClick={() => scrollToSection(item.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""))}
+                                            className={`px-4 py-2 text-sm font-medium rounded-full transition-colors ${
+                                                scrolled ? 'text-slate-600 hover:bg-slate-100 hover:text-emerald-600' : 'text-white/90 hover:bg-white/10 hover:text-white'
+                                            }`}
+                                        >
+                                            {item}
+                                        </button>
+                                    ))}
+                                    <div className="ml-4 pl-4 border-l border-slate-200/20">
+                                        <a href={whatsappLink} target="_blank" rel="noopener noreferrer"
+                                            className="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-2.5 rounded-full text-sm font-bold shadow-lg shadow-emerald-500/30 transition-all transform hover:-translate-y-0.5 flex items-center">
+                                            Inscribirme 
+                                            <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <button onClick={() => setIsMenuOpen(!isMenuOpen)} className={`md:hidden p-2 rounded-md ${scrolled ? 'text-slate-800' : 'text-white'}`}>
+                                    {isMenuOpen ? (
+                                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                                    ) : (
+                                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                                    )}
+                                </button>
+                            </div>
+                        </div>
+
+                        {isMenuOpen && (
+                            <div className="absolute top-full left-0 w-full bg-white shadow-xl border-t p-4 flex flex-col space-y-2 md:hidden">
+                                {['Temario', 'Horarios', 'Inversión'].map(item => (
+                                    <button key={item} onClick={() => scrollToSection(item.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""))} 
+                                        className="text-left px-4 py-3 text-slate-600 font-medium hover:bg-slate-50 rounded-lg">
+                                        {item}
+                                    </button>
+                                ))}
+                                <a href={whatsappLink} target="_blank" rel="noopener noreferrer" 
+                                    className="bg-emerald-500 text-white px-4 py-3 rounded-lg font-bold text-center mt-2">
+                                    Inscribirme Ahora
+                                </a>
+                            </div>
+                        )}
+                    </nav>
+
+                    {/* Hero Section */}
+                    <div className="relative min-h-screen flex items-center justify-center overflow-hidden bg-slate-900">
+                        <div className="absolute inset-0 z-0">
+                            <img className="w-full h-full object-cover scale-105 opacity-40" 
+                                src="https://images.unsplash.com/photo-1488646953014-85cb44e25828?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80" 
+                                alt="Viajero con mapa" />
+                            <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-900/95 to-emerald-900/50" />
+                        </div>
+
+                        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-20">
+                            <div className="grid lg:grid-cols-2 gap-12 items-center">
+                                
+                                <div className="space-y-8">
+                                    {/* Badge for graduates */}
+                                    <div className="inline-flex items-center space-x-2 bg-emerald-500/20 backdrop-blur-sm px-4 py-2 rounded-full border border-emerald-500/30 text-emerald-300 text-sm font-semibold">
+                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+                                        <span>Exclusivo para alumnos Glish nivel avanzado</span>
+                                    </div>
+                                    
+                                    <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-tight">
+                                        Seminario de<br/>
+                                        <span className="gradient-text">
+                                            Viajes y Turismo
+                                        </span>
+                                    </h1>
+
+                                    <p className="text-lg text-slate-300 max-w-xl leading-relaxed">
+                                        Aprende el inglés que <strong className="text-white">realmente necesitas</strong> cuando viajas: 
+                                        desde pasar migración sin nervios, hasta regatear precios y manejar emergencias como un experto.
+                                    </p>
+
+                                    {/* Modality Pills */}
+                                    <div className="flex flex-wrap gap-3">
+                                        <div className="flex items-center bg-white/10 backdrop-blur-md border border-white/20 rounded-full px-4 py-2 text-white text-sm font-medium">
+                                            <svg className="w-4 h-4 mr-2 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>
+                                            100% Online
+                                        </div>
+                                        <div className="flex items-center bg-white/10 backdrop-blur-md border border-white/20 rounded-full px-4 py-2 text-white text-sm font-medium">
+                                            <svg className="w-4 h-4 mr-2 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+                                            Clases en vivo
+                                        </div>
+                                        <div className="flex items-center bg-white/10 backdrop-blur-md border border-white/20 rounded-full px-4 py-2 text-white text-sm font-medium">
+                                            <svg className="w-4 h-4 mr-2 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                                            Grupos de 8-10
+                                        </div>
+                                    </div>
+
+                                    <div className="flex flex-col sm:flex-row gap-4 pt-4">
+                                        <a href={whatsappLink} target="_blank" rel="noopener noreferrer"
+                                            className="px-8 py-4 bg-emerald-500 hover:bg-emerald-600 text-white text-base font-bold rounded-xl shadow-xl shadow-emerald-900/30 transition-all transform hover:-translate-y-1 flex items-center justify-center">
+                                            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+                                            Reservar mi lugar
+                                        </a>
+                                        <button onClick={() => scrollToSection('temario')}
+                                            className="px-8 py-4 bg-white/10 hover:bg-white/20 text-white text-base font-semibold rounded-xl border border-white/20 transition-all flex items-center justify-center">
+                                            Ver temario completo
+                                            <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+                                        </button>
+                                    </div>
+
+                                    {/* Quick stats */}
+                                    <div className="grid grid-cols-3 gap-4 pt-6 border-t border-white/10">
+                                        <div className="text-center">
+                                            <div className="text-2xl font-bold text-white">16</div>
+                                            <div className="text-xs text-slate-400">Clases en vivo</div>
+                                        </div>
+                                        <div className="text-center">
+                                            <div className="text-2xl font-bold text-white">3</div>
+                                            <div className="text-xs text-slate-400">Meses</div>
+                                        </div>
+                                        <div className="text-center">
+                                            <div className="text-2xl font-bold text-white">3</div>
+                                            <div className="text-xs text-slate-400">Hrs/semana</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Visual Card */}
+                                <div className="hidden lg:block relative">
+                                    <div className="relative bg-white rounded-3xl shadow-2xl overflow-hidden transform rotate-1 hover:rotate-0 transition-all duration-500">
+                                        <div className="bg-gradient-to-r from-emerald-600 to-teal-600 p-6 text-white">
+                                            <div className="flex items-center justify-between">
+                                                <div>
+                                                    <p className="text-emerald-200 text-xs font-medium uppercase tracking-wider">Seminario Glish</p>
+                                                    <h3 className="text-2xl font-bold mt-1">Travel & Tourism</h3>
+                                                </div>
+                                                <svg className="w-12 h-12 text-white/30" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                                            </div>
+                                        </div>
+                                        <div className="p-6 space-y-4">
+                                            <div className="flex items-start gap-3">
+                                                <div className="bg-emerald-100 p-2 rounded-lg">
+                                                    <svg className="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/><path d="M14.05 2a9 9 0 0 1 8 7.94"/><path d="M14.05 6A5 5 0 0 1 18 10"/></svg>
+                                                </div>
+                                                <div>
+                                                    <h4 className="font-semibold text-slate-800">Aeropuertos sin estrés</h4>
+                                                    <p className="text-sm text-slate-500">Migración, aduanas y vuelos perdidos</p>
+                                                </div>
+                                            </div>
+                                            <div className="flex items-start gap-3">
+                                                <div className="bg-blue-100 p-2 rounded-lg">
+                                                    <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                                                </div>
+                                                <div>
+                                                    <h4 className="font-semibold text-slate-800">Manejo de crisis</h4>
+                                                    <p className="text-sm text-slate-500">Robos, emergencias y quejas formales</p>
+                                                </div>
+                                            </div>
+                                            <div className="flex items-start gap-3">
+                                                <div className="bg-orange-100 p-2 rounded-lg">
+                                                    <svg className="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M12 10a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/><path d="M2 10h2"/><path d="M20 10h2"/><path d="M2 14h2"/><path d="M20 14h2"/></svg>
+                                                </div>
+                                                <div>
+                                                    <h4 className="font-semibold text-slate-800">Cultura y dinero</h4>
+                                                    <p className="text-sm text-slate-500">Propinas, regateo y trampas turísticas</p>
+                                                </div>
+                                            </div>
+                                            <div className="mt-6 pt-4 border-t border-slate-100">
+                                                <div className="flex items-center justify-between text-sm">
+                                                    <span className="text-slate-500">Inicio de clases:</span>
+                                                    <span className="font-bold text-slate-800">2 de Febrero 2026</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    {/* Floating badge */}
+                                    <div className="absolute -bottom-4 -left-4 bg-slate-900 text-white px-4 py-2 rounded-full shadow-lg text-sm font-semibold flex items-center">
+                                        <svg className="w-4 h-4 text-yellow-400 mr-2 fill-current" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                                        Nuevo seminario 2026
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Problem-Solution Section */}
+                    <div className="py-20 bg-slate-50">
+                        <div className="max-w-6xl mx-auto px-4">
+                            <div className="text-center mb-16">
+                                <h2 className="text-3xl font-bold text-slate-900 mb-4">
+                                    ¿Ya dominas el inglés pero te <span className="text-red-500">congelas</span> en el aeropuerto?
+                                </h2>
+                                <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+                                    Hablar inglés en clase es una cosa. Usarlo cuando un oficial de migración te interroga... es otra muy diferente.
+                                </p>
+                            </div>
+
+                            <div className="grid md:grid-cols-2 gap-8 mb-12">
+                                {/* Problems */}
+                                <div className="bg-white rounded-2xl p-8 border border-red-100 shadow-sm">
+                                    <div className="flex items-center gap-3 mb-6">
+                                        <div className="bg-red-100 p-2 rounded-full">
+                                            <svg className="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                                        </div>
+                                        <h3 className="text-xl font-bold text-slate-900">Lo que te pasa ahora</h3>
+                                    </div>
+                                    <ul className="space-y-4">
+                                        {[
+                                            "Te pones nervioso cuando el oficial de migración te hace preguntas",
+                                            "No sabes cuánto dar de propina y terminas pagando de más (o de menos)",
+                                            "Los vendedores te ven la cara y te cobran precio de turista",
+                                            "Si algo sale mal, no sabes cómo reclamar correctamente",
+                                            "Pierdes oportunidades de conectar con locales por pena"
+                                        ].map((item, i) => (
+                                            <li key={i} className="flex items-start gap-3 text-slate-600">
+                                                <svg className="w-5 h-5 text-red-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                                                <span>{item}</span>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+
+                                {/* Solutions */}
+                                <div className="bg-gradient-to-br from-emerald-600 to-teal-600 rounded-2xl p-8 text-white shadow-lg">
+                                    <div className="flex items-center gap-3 mb-6">
+                                        <div className="bg-white/20 p-2 rounded-full">
+                                            <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                                        </div>
+                                        <h3 className="text-xl font-bold">Después del seminario</h3>
+                                    </div>
+                                    <ul className="space-y-4">
+                                        {[
+                                            "Pasas migración con confianza, sabiendo exactamente qué decir",
+                                            "Conoces la etiqueta de propinas de cada país antes de llegar",
+                                            "Identificas trampas turísticas y negocias precios justos",
+                                            "Manejas cualquier problema: robos, quejas, emergencias médicas",
+                                            "Haces small talk natural y conectas con gente de todo el mundo"
+                                        ].map((item, i) => (
+                                            <li key={i} className="flex items-start gap-3">
+                                                <svg className="w-5 h-5 text-emerald-300 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                                                <span>{item}</span>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            </div>
+
+                            {/* Differentiators */}
+                            <div className="bg-white rounded-2xl p-8 border border-slate-200 shadow-sm">
+                                <h3 className="text-center text-lg font-bold text-slate-900 mb-8">
+                                    ¿Por qué este seminario es diferente?
+                                </h3>
+                                <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                                    {[
+                                        { icon: "video", title: "Clases en vivo", desc: "No videos grabados. Interactúas con tu coach en tiempo real" },
+                                        { icon: "target", title: "100% situacional", desc: "Practicas escenarios reales, no gramática teórica" },
+                                        { icon: "shield", title: "Lo que nadie enseña", desc: "Emergencias, robos, quejas y crisis reales" },
+                                        { icon: "map", title: "Proyecto personal", desc: "Diseñas el itinerario de tu próximo viaje real" }
+                                    ].map((item, i) => (
+                                        <div key={i} className="text-center">
+                                            <div className="bg-emerald-100 w-14 h-14 rounded-2xl flex items-center justify-center text-emerald-600 mx-auto mb-4">
+                                                {item.icon === 'video' && <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>}
+                                                {item.icon === 'target' && <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>}
+                                                {item.icon === 'shield' && <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>}
+                                                {item.icon === 'map' && <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>}
+                                            </div>
+                                            <h4 className="font-bold text-slate-900 mb-2">{item.title}</h4>
+                                            <p className="text-sm text-slate-500">{item.desc}</p>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Temario Section */}
+                    <div id="temario" className="py-20 bg-white">
+                        <div className="max-w-6xl mx-auto px-4">
+                            <div className="text-center mb-12">
+                                <span className="text-emerald-600 font-semibold text-sm uppercase tracking-wider">Temario completo</span>
+                                <h2 className="text-3xl font-bold text-slate-900 mt-2 mb-4">16 clases diseñadas para viajeros reales</h2>
+                                <p className="text-slate-600 max-w-2xl mx-auto">
+                                    Cada clase tiene un objetivo práctico específico. Al terminar, habrás practicado todas las situaciones que enfrentarás en tu próximo viaje.
+                                </p>
+                            </div>
+
+                            {/* Module tabs */}
+                            <div className="flex flex-wrap justify-center gap-2 mb-8">
+                                {modules.map((mod, i) => (
+                                    <button
+                                        key={i}
+                                        onClick={() => setActiveModule(i)}
+                                        className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                                            activeModule === i 
+                                                ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-500/30' 
+                                                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                                        }`}
+                                    >
+                                        {mod.icon === 'plane' && <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></svg>}
+                                        {mod.icon === 'map-pin' && <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>}
+                                        {mod.icon === 'coffee' && <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>}
+                                        {mod.icon === 'shield' && <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>}
+                                        <span className="hidden sm:inline">{mod.title}</span>
+                                    </button>
+                                ))}
+                            </div>
+
+                            {/* Active module content */}
+                            <div className="bg-slate-50 rounded-3xl p-8 border border-slate-200">
+                                <div className="grid md:grid-cols-2 gap-8">
+                                    <div>
+                                        <h3 className="text-xl font-bold text-slate-900 mb-4 flex items-center gap-3">
+                                            <span className="bg-emerald-600 text-white p-2 rounded-lg">
+                                                {modules[activeModule].icon === 'plane' && <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></svg>}
+                                                {modules[activeModule].icon === 'map-pin' && <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>}
+                                                {modules[activeModule].icon === 'coffee' && <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>}
+                                                {modules[activeModule].icon === 'shield' && <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>}
+                                            </span>
+                                            {modules[activeModule].title}
+                                        </h3>
+                                        <div className="space-y-3">
+                                            <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider">Clases incluidas:</p>
+                                            {modules[activeModule].classes.map((cls, i) => (
+                                                <div key={i} className="flex items-center gap-3 bg-white p-3 rounded-lg border border-slate-200">
+                                                    <span className="bg-emerald-100 text-emerald-600 text-xs font-bold px-2 py-1 rounded">
+                                                        {String(i + 1).padStart(2, '0')}
+                                                    </span>
+                                                    <span className="font-medium text-slate-700">{cls}</span>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-4">Lo que aprenderás:</p>
+                                        <ul className="space-y-3">
+                                            {modules[activeModule].topics.map((topic, i) => (
+                                                <li key={i} className="flex items-start gap-3">
+                                                    <svg className="w-5 h-5 text-emerald-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                                                    <span className="text-slate-700">{topic}</span>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Final project highlight */}
+                            <div className="mt-12 bg-gradient-to-r from-slate-900 to-slate-800 rounded-3xl p-8 md:p-12 text-white relative overflow-hidden">
+                                <div className="relative z-10 grid md:grid-cols-2 gap-8 items-center">
+                                    <div>
+                                        <span className="text-emerald-400 font-semibold text-sm uppercase tracking-wider">Proyecto final</span>
+                                        <h3 className="text-2xl md:text-3xl font-bold mt-2 mb-4">"Dream Destination"</h3>
+                                        <p className="text-slate-300 mb-6">
+                                            Tu examen no es de papel. Diseñarás el <strong className="text-white">itinerario completo de tu próximo viaje</strong> y 
+                                            lo presentarás en inglés, demostrando todo lo aprendido en role-plays realistas.
+                                        </p>
+                                        <ul className="space-y-2 text-sm">
+                                            {["Elige cualquier destino que sueñes visitar", "Planifica vuelos, alojamiento y actividades", "Defiende tu itinerario en inglés"].map((item, i) => (
+                                                <li key={i} className="flex items-center gap-2 text-slate-300">
+                                                    <svg className="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                                                    {item}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                    <div className="hidden md:flex justify-center">
+                                        <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
+                                            <svg className="w-32 h-32 text-emerald-400/50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Horarios Section */}
+                    <div id="horarios" className="py-20 bg-slate-50">
+                        <div className="max-w-6xl mx-auto px-4">
+                            <div className="text-center mb-12">
+                                <span className="text-emerald-600 font-semibold text-sm uppercase tracking-wider">Horarios disponibles</span>
+                                <h2 className="text-3xl font-bold text-slate-900 mt-2 mb-4">Elige el horario que mejor te funcione</h2>
+                                <p className="text-slate-600">Duración: 3 meses · 3 horas semanales · Inicio: 2 de Febrero</p>
+                            </div>
+
+                            {/* Meet badge */}
+                            <div className="max-w-2xl mx-auto mb-10 bg-blue-50 border border-blue-200 rounded-2xl p-4 flex items-center">
+                                <div className="bg-white p-3 rounded-xl shadow-sm mr-4">
+                                    <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+                                </div>
+                                <div>
+                                    <h4 className="font-bold text-blue-900">Todas las clases son en vivo por Google Meet</h4>
+                                    <p className="text-blue-700 text-sm">Interactúas directamente con tu coach y compañeros. No son videos pregrabados.</p>
+                                </div>
+                            </div>
+
+                            <div className="grid md:grid-cols-3 gap-6">
+                                {/* Matutino */}
+                                <div className="bg-white border border-slate-200 rounded-2xl p-6 hover:border-emerald-300 hover:shadow-lg transition-all">
+                                    <div className="flex justify-between items-start mb-4">
+                                        <span className="bg-amber-100 text-amber-700 text-xs font-bold px-3 py-1 rounded-full">☀️ MATUTINO</span>
+                                        <svg className="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                    </div>
+                                    <h3 className="text-xl font-bold text-slate-900 mb-4">Opción A</h3>
+                                    <div className="space-y-3">
+                                        <div className="flex justify-between items-center py-2 border-b border-slate-100">
+                                            <span className="font-medium text-slate-700">Martes</span>
+                                            <span className="text-slate-500 text-sm">7:00 - 9:00 AM</span>
+                                        </div>
+                                        <div className="flex justify-between items-center py-2">
+                                            <span className="font-medium text-slate-700">Jueves</span>
+                                            <span className="text-slate-500 text-sm">7:00 - 8:00 AM</span>
+                                        </div>
+                                    </div>
+                                    <p className="text-xs text-slate-400 mt-4 text-center">Ideal para empezar el día productivo</p>
+                                </div>
+
+                                {/* Vespertino - Featured */}
+                                <div className="relative bg-gradient-to-br from-emerald-600 to-teal-600 rounded-2xl p-6 text-white shadow-xl transform md:-translate-y-2">
+                                    <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                                        <span className="bg-orange-500 text-white text-xs font-bold px-4 py-1 rounded-full shadow-lg">
+                                            ⭐ MÁS POPULAR
+                                        </span>
+                                    </div>
+                                    <div className="flex justify-between items-start mb-4 mt-2">
+                                        <span className="bg-white/20 text-white text-xs font-bold px-3 py-1 rounded-full">🌙 VESPERTINO</span>
+                                        <svg className="w-5 h-5 text-white/60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                    </div>
+                                    <h3 className="text-xl font-bold mb-4">Opción B</h3>
+                                    <div className="space-y-3">
+                                        <div className="flex justify-between items-center py-2 border-b border-white/20">
+                                            <span className="font-medium">Miércoles</span>
+                                            <span className="text-emerald-200 text-sm">7:00 - 9:00 PM</span>
+                                        </div>
+                                        <div className="flex justify-between items-center py-2">
+                                            <span className="font-medium">Viernes</span>
+                                            <span className="text-emerald-200 text-sm">7:00 - 8:00 PM</span>
+                                        </div>
+                                    </div>
+                                    <p className="text-xs text-emerald-200 mt-4 text-center">Perfecto después del trabajo</p>
+                                </div>
+
+                                {/* Sabatino */}
+                                <div className="bg-white border border-slate-200 rounded-2xl p-6 hover:border-emerald-300 hover:shadow-lg transition-all">
+                                    <div className="flex justify-between items-start mb-4">
+                                        <span className="bg-purple-100 text-purple-700 text-xs font-bold px-3 py-1 rounded-full">📅 SABATINO</span>
+                                        <svg className="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                    </div>
+                                    <h3 className="text-xl font-bold text-slate-900 mb-4">Opción C</h3>
+                                    <div className="space-y-3">
+                                        <div className="flex justify-between items-center py-2 border-b border-slate-100">
+                                            <span className="font-medium text-slate-700">Sábado</span>
+                                            <span className="text-slate-500 text-sm">10:00 AM - 1:00 PM</span>
+                                        </div>
+                                        <div className="py-2 text-center">
+                                            <span className="text-xs text-slate-400 italic">Sesión intensiva de 3 horas</span>
+                                        </div>
+                                    </div>
+                                    <p className="text-xs text-slate-400 mt-4 text-center">Un solo día a la semana</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Inversión Section */}
+                    <div id="inversion" className="py-20 bg-white">
+                        <div className="max-w-5xl mx-auto px-4">
+                            <div className="text-center mb-12">
+                                <span className="text-emerald-600 font-semibold text-sm uppercase tracking-wider">Inversión</span>
+                                <h2 className="text-3xl font-bold text-slate-900 mt-2 mb-4">Invierte en experiencias que durarán toda la vida</h2>
+                            </div>
+
+                            <div className="grid lg:grid-cols-5 gap-8">
+                                {/* Pricing options */}
+                                <div className="lg:col-span-2 space-y-4">
+                                    <div className="bg-slate-50 rounded-2xl p-6 border border-slate-200">
+                                        <div className="flex justify-between items-start mb-4">
+                                            <span className="text-xs font-bold text-slate-500 uppercase">Pago mensual</span>
+                                        </div>
+                                        <div className="flex items-baseline mb-2">
+                                            <span className="text-3xl font-bold text-slate-900">$X,XXX</span>
+                                            <span className="text-slate-500 ml-2">/ mes</span>
+                                        </div>
+                                        <p className="text-sm text-slate-500">3 pagos durante el seminario</p>
+                                    </div>
+
+                                    <div className="bg-gradient-to-br from-emerald-600 to-teal-600 rounded-2xl p-6 text-white relative overflow-hidden">
+                                        <div className="absolute top-0 right-0 bg-orange-500 text-white text-xs font-bold px-3 py-1 rounded-bl-xl">
+                                            AHORRA
+                                        </div>
+                                        <span className="text-xs font-bold text-emerald-200 uppercase">Pago de contado</span>
+                                        <div className="flex items-baseline my-2">
+                                            <span className="text-3xl font-bold">$X,XXX</span>
+                                            <span className="text-emerald-200 ml-2">total</span>
+                                        </div>
+                                        <p className="text-sm text-emerald-200">Curso completo de 3 meses</p>
+                                        <div className="flex items-center mt-4 pt-4 border-t border-white/20 text-sm">
+                                            <svg className="w-4 h-4 mr-2 text-yellow-300 fill-current" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                                            Certificación incluida
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Payment info */}
+                                <div className="lg:col-span-3 bg-slate-50 rounded-2xl border border-slate-200 overflow-hidden">
+                                    <div className="bg-slate-100 p-4 border-b border-slate-200">
+                                        <h3 className="font-bold text-slate-900 flex items-center">
+                                            <svg className="w-5 h-5 mr-2 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><line x1="3" y1="22" x2="21" y2="22"/><line x1="6" y1="18" x2="6" y2="11"/><line x1="10" y1="18" x2="10" y2="11"/><line x1="14" y1="18" x2="14" y2="11"/><line x1="18" y1="18" x2="18" y2="11"/><polygon points="12 2 20 7 4 7"/></svg>
+                                            Datos para transferencia
+                                        </h3>
+                                    </div>
+                                    
+                                    <div className="p-6 space-y-6">
+                                        <div className="space-y-4">
+                                            <div>
+                                                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Banco</p>
+                                                <p className="text-lg font-medium text-slate-900">Por confirmar</p>
+                                            </div>
+                                            <div className="grid grid-cols-2 gap-4">
+                                                <div>
+                                                    <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Cuenta</p>
+                                                    <p className="text-lg font-mono text-slate-900">XXXXXXXXXX</p>
+                                                </div>
+                                                <div>
+                                                    <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">CLABE</p>
+                                                    <p className="text-lg font-mono text-slate-900 break-all">XXXXXXXXXXXXXXXXXX</p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="bg-amber-50 p-4 rounded-xl border border-amber-200 flex items-start">
+                                            <svg className="w-5 h-5 text-amber-600 flex-shrink-0 mr-3 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                                            <div className="text-sm text-amber-800">
+                                                <strong>Referencia:</strong> Usa tu nombre completo al hacer la transferencia.
+                                            </div>
+                                        </div>
+
+                                        <a href={whatsappLink} target="_blank" rel="noopener noreferrer"
+                                            className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-4 rounded-xl shadow-lg shadow-green-500/30 transform transition hover:-translate-y-1 flex justify-center items-center">
+                                            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+                                            Enviar comprobante por WhatsApp
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* FAQ Section */}
+                    <div className="py-20 bg-slate-50">
+                        <div className="max-w-3xl mx-auto px-4">
+                            <div className="text-center mb-12">
+                                <h2 className="text-3xl font-bold text-slate-900">Preguntas frecuentes</h2>
+                            </div>
+                            
+                            <div className="space-y-4">
+                                {[
+                                    { q: "¿Necesito ser alumno de Glish para inscribirme?", a: "Este seminario está diseñado para alumnos que están por terminar o ya terminaron su programa de inglés en Glish. Requiere nivel avanzado." },
+                                    { q: "¿Las clases quedan grabadas?", a: "Las sesiones son en vivo y la participación activa es clave. Se prioriza la práctica en tiempo real con tu coach y compañeros." },
+                                    { q: "¿Qué pasa si pierdo una clase?", a: "Contacta a tu coach para ponerte al día con el material. Los grupos pequeños permiten dar seguimiento personalizado." },
+                                    { q: "¿Hay tarea o material adicional?", a: "Sí, tendrás acceso a material digital y trabajarás en tu proyecto 'Dream Destination' durante las 12 semanas." }
+                                ].map((item, i) => (
+                                    <div key={i} className="bg-white rounded-xl p-6 border border-slate-200">
+                                        <h3 className="font-bold text-slate-900 mb-2">{item.q}</h3>
+                                        <p className="text-slate-600 text-sm">{item.a}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Final CTA */}
+                    <div className="py-16 bg-gradient-to-r from-emerald-600 to-teal-600">
+                        <div className="max-w-4xl mx-auto px-4 text-center">
+                            <h2 className="text-3xl font-bold text-white mb-4">¿Listo para viajar con confianza?</h2>
+                            <p className="text-emerald-100 mb-8 text-lg">
+                                Inscripciones abiertas hasta el 30 de enero. Cupo limitado a 8-10 alumnos por grupo.
+                            </p>
+                            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                                <a href={whatsappLink} target="_blank" rel="noopener noreferrer"
+                                    className="inline-flex items-center justify-center px-8 py-4 bg-white text-emerald-600 font-bold rounded-xl shadow-xl hover:shadow-2xl transition-all transform hover:-translate-y-1">
+                                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+                                    Inscribirme ahora
+                                </a>
+                                <a href="tel:+523314360000"
+                                    className="inline-flex items-center justify-center px-8 py-4 bg-emerald-700 text-white font-semibold rounded-xl border border-emerald-500 hover:bg-emerald-800 transition-all">
+                                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                                    Llamar para más info
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Footer */}
+                    <footer className="bg-slate-900 text-white py-12">
+                        <div className="max-w-6xl mx-auto px-4">
+                            <div className="flex flex-col md:flex-row justify-between items-center">
+                                <div className="flex items-center mb-6 md:mb-0">
+                                    <img 
+                                        src="glish-logo-white.png" 
+                                        alt="Glish" 
+                                        className="h-10 w-auto"
+                                    />
+                                </div>
+                                <div className="text-center md:text-right">
+                                    <p className="text-slate-400 text-sm">Un seminario de</p>
+                                    <p className="font-semibold">Glish English · glishenglish.com</p>
+                                </div>
+                            </div>
+                            <div className="mt-8 pt-8 border-t border-slate-800 text-center text-slate-500 text-sm">
+                                © 2026 Glish. Todos los derechos reservados.
+                            </div>
+                        </div>
+                    </footer>
+
+                    {/* Floating WhatsApp Button */}
+                    <a href={whatsappLink} target="_blank" rel="noopener noreferrer"
+                        className="fixed bottom-6 right-6 bg-green-500 hover:bg-green-600 text-white p-4 rounded-full shadow-xl shadow-green-500/30 transition-all transform hover:scale-110 z-50">
+                        <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+                    </a>
+                </div>
+            );
+        };
+
+        ReactDOM.createRoot(document.getElementById('root')).render(<LandingPage />);
+    </script>
+</body>
+</html>
